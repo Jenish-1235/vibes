@@ -82,7 +82,7 @@ If you are an AI agent operating inside this repository, read this section caref
 ## Starting a New Project
 
 When adding a new project to this monorepo:
-
+0. Create a new branch with this naming strategy project/<project-name>, this helps keeping all projects as separate branches until ready to be merged into main
 1. Create a top-level directory with a short, lowercase, hyphenated slug.
 2. Write `PRD.md` before writing any code. If you can't write a one-paragraph problem statement, the idea isn't ready.
 3. Write `TRD.md` before writing any code. Commit to the stack and data model upfront.
