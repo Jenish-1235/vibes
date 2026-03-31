@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="green_positive">#2E7D32</color>
+    <color name="red_negative">#C62828</color>
+    <color name="green_positive_light">#E8F5E9</color>
+    <color name="red_negative_light">#FFEBEE</color>
+    <color name="widget_bg">#FFFFFF</color>
+    <color name="text_primary">#212121</color>
+    <color name="text_secondary">#757575</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="background">#FAFAFA</color>
+    <color name="chip_selected">#E3F2FD</color>
+</resources>
