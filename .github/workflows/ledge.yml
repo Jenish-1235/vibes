@@ -1,0 +1,79 @@
+# GitHub only loads workflows from .github/workflows at the repository root.
+# Build steps live in ledge/.github/actions/android-ci (composite action).
+name: Ledge
+
+# Note: no paths filter on push — tag releases must run even if the tagged commit
+# did not touch ledge/. Pull requests stay scoped to ledge-related paths.
+on:
+  push:
+    branches: [main, master]
+    tags:
+      - "ledge-v*"
+  pull_request:
+    branches: [main, master]
+    paths:
+      - "ledge/**"
+      - ".github/workflows/ledge.yml"
+      - "ledge/.github/actions/**"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ledge-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Grant execute permission for Gradle wrapper
+        run: chmod +x ledge/gradlew
+
+      - name: Test and build (composite action in ledge/)
+        uses: ./ledge/.github/actions/android-ci
+
+      - name: Upload release APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: ledge-release-apk
+          path: ledge/app/build/outputs/apk/release/*.apk
+          if-no-files-found: error
+
+  release:
+    needs: test-and-build
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/ledge-v')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download APK
+        uses: actions/download-artifact@v4
+        with:
+          name: ledge-release-apk
+          path: apk
+
+      - name: Rename APK for release
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          files=(apk/*.apk)
+          if [ ${#files[@]} -ne 1 ]; then
+            echo "Expected exactly one APK, got: ${files[*]-none}"
+            exit 1
+          fi
+          mv "${files[0]}" "apk/Ledge-${{ github.ref_name }}.apk"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: Ledge ${{ github.ref_name }}
+          files: apk/Ledge-${{ github.ref_name }}.apk
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

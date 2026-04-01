@@ -1,0 +1,29 @@
+# Composite action: test + release build for the Ledge Android module.
+# Invoked from the repo-root workflow via uses: ./ledge/.github/actions/android-ci
+name: Android CI (Ledge)
+description: Set up JDK/Android SDK/Gradle and run unit tests plus assembleRelease for ledge/
+
+runs:
+  using: composite
+  steps:
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        distribution: temurin
+        java-version: "17"
+
+    - name: Set up Android SDK
+      uses: android-actions/setup-android@v3
+
+    - name: Set up Gradle
+      uses: gradle/actions/setup-gradle@v4
+
+    - name: Run unit tests
+      shell: bash
+      working-directory: ledge
+      run: ./gradlew test --stacktrace
+
+    - name: Build release APK
+      shell: bash
+      working-directory: ledge
+      run: ./gradlew assembleRelease --stacktrace
