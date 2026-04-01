@@ -49,6 +49,7 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
         android:contentDescription="@string/add_friend"
+        app:backgroundTint="?attr/colorPrimary"
         app:srcCompat="@android:drawable/ic_input_add"
-        app:tint="@android:color/white" />
+        app:tint="?attr/colorOnPrimary" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

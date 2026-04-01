@@ -1,0 +1,14 @@
+.env
+.idea
+.vscode
+.gradle
+.DS_Store
+build
+local.properties
+*.iml
+*.ipr
+*.iws
+*.class
+*.jar
+*.war
+*.ear

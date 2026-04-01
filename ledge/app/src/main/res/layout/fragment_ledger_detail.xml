@@ -33,7 +33,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="#E0E0E0" />
+        android:background="@color/divider" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/transactions_list"
