@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="green_positive">#6BC49A</color>
+    <color name="red_negative">#D4A0A0</color>
+    <color name="green_positive_light">#1E2E28</color>
+    <color name="red_negative_light">#2A2222</color>
+    <color name="widget_bg">#1C1F1D</color>
+    <color name="text_primary">#EDEAE4</color>
+    <color name="text_secondary">#A3A099</color>
+    <color name="surface">#222624</color>
+    <color name="background">#181B19</color>
+    <color name="chip_selected">#2D3B35</color>
+    <color name="divider">#3A3F3C</color>
+    <color name="handle">#5C605C</color>
+</resources>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Calm ledger: warm paper neutrals + muted sage primary, soft forest / dusty rose for balances -->
+    <color name="green_positive">#3F8F6C</color>
+    <color name="red_negative">#B87A7A</color>
+    <color name="green_positive_light">#E6F1EB</color>
+    <color name="red_negative_light">#F7EDED</color>
+    <color name="widget_bg">#FEFCF9</color>
+    <color name="text_primary">#2C2B28</color>
+    <color name="text_secondary">#6E6C68</color>
+    <color name="surface">#FEFCF9</color>
+    <color name="background">#F3F0EA</color>
+    <color name="chip_selected">#DFEBE5</color>
+    <color name="divider">#E2DDD4</color>
+    <color name="handle">#C8C4BC</color>
+</resources>

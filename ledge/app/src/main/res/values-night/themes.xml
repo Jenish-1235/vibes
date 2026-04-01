@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.Ledge" parent="Theme.Material3.Dark.NoActionBar">
+        <item name="colorPrimary">#9ABFB0</item>
+        <item name="colorOnPrimary">#0D1F18</item>
+        <item name="colorPrimaryContainer">#3D5248</item>
+        <item name="colorOnPrimaryContainer">#D2E5DC</item>
+        <item name="colorSecondary">#B4B8B2</item>
+        <item name="colorOnSecondary">#1A1C1A</item>
+        <item name="colorSecondaryContainer">#3A3D39</item>
+        <item name="colorOnSecondaryContainer">#E6E8E4</item>
+        <item name="colorSurface">@color/surface</item>
+        <item name="colorOnSurface">@color/text_primary</item>
+        <item name="colorOnSurfaceVariant">@color/text_secondary</item>
+        <item name="colorOutline">@color/divider</item>
+        <item name="android:colorBackground">@color/background</item>
+        <item name="android:textColorPrimary">@color/text_primary</item>
+        <item name="android:textColorSecondary">@color/text_secondary</item>
+        <item name="android:textColorHint">@color/text_secondary</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@color/background</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">false</item>
+    </style>
+</resources>

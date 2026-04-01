@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Ledge</string>
+    <string name="add_friend">Add Friend</string>
+    <string name="friend_name_hint">Friend name</string>
+    <string name="i_gave">I Gave</string>
+    <string name="i_owe">I Owe</string>
+    <string name="add_note">+ add note</string>
+    <string name="note_hint">Note (optional)</string>
+    <string name="amount_hint">0</string>
+    <string name="rupee_symbol">₹</string>
+    <string name="logged_snackbar">Logged ₹%1$s with %2$s</string>
+    <string name="transaction_deleted">Transaction deleted</string>
+    <string name="undo">Undo</string>
+    <string name="no_friends_yet">No friends yet.\nTap + to add one.</string>
+    <string name="no_transactions_yet">No transactions yet.</string>
+    <string name="cancel">Cancel</string>
+    <string name="add">Add</string>
+    <string name="widget_description">Shows your net balance across all friends</string>
+</resources>

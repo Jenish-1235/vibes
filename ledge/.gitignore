@@ -1,0 +1,15 @@
+.env
+.idea
+.vscode
+.gradle
+.DS_Store
+build
+local.properties
+*.iml
+*.ipr
+*.iws
+*.class
+*.jar
+!gradle/wrapper/gradle-wrapper.jar
+*.war
+*.ear
