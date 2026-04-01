@@ -22,6 +22,10 @@ android {
         release {
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            // Unsigned release APKs cannot be installed ("package invalid"). Sign with the
+            // default debug keystore so GitHub-release APKs sideload; swap for a release
+            // keystore + CI secrets if you publish to Play Store.
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
 
