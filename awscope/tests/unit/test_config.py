@@ -4,6 +4,7 @@ from pathlib import Path
 import pytest
 
 from awscope.config import (
+    AccountConfig,
     ConfigError,
     _infer_auth_type,
     get_anthropic_settings,
@@ -33,10 +34,22 @@ def test_infer_auth_type_ambient_role():
     assert _infer_auth_type({"role_arn": "arn:aws:iam::123:role/R"}) == "ambient+role"
 
 
-def test_load_config_missing_file(tmp_path, monkeypatch):
+def test_load_config_missing_file_no_ambient(tmp_path, monkeypatch):
     monkeypatch.setattr("awscope.config.CONFIG_FILE", tmp_path / "config.toml")
+    # _ambient_account will fail because moto/test env has no real STS
+    monkeypatch.setattr("awscope.config._ambient_account", lambda: None)
     with pytest.raises(ConfigError, match="Config file not found"):
         load_config()
+
+
+def test_load_config_missing_file_uses_ambient(tmp_path, monkeypatch):
+    monkeypatch.setattr("awscope.config.CONFIG_FILE", tmp_path / "config.toml")
+    fake = AccountConfig(alias="123456789012", auth_type="ambient+role")
+    monkeypatch.setattr("awscope.config._ambient_account", lambda: fake)
+    configs = load_config()
+    assert len(configs) == 1
+    assert configs[0].auth_type == "ambient+role"
+    assert configs[0].profile is None
 
 
 def test_load_config_parses_accounts(tmp_path, monkeypatch):

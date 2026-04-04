@@ -48,11 +48,30 @@ def _infer_auth_type(data: dict) -> str:
     return "profile"
 
 
+def _ambient_account() -> AccountConfig | None:
+    """Return a single ambient-credential account if boto3 can resolve creds
+    without any config file. Covers EC2 instance roles, ECS task roles,
+    Lambda execution roles, environment variable credentials, etc."""
+    try:
+        import boto3 as _boto3
+        session = _boto3.Session()
+        identity = session.client("sts", region_name="us-east-1").get_caller_identity()
+        alias = identity.get("Account", "ambient")
+        return AccountConfig(alias=alias, auth_type="ambient+role")
+    except Exception:
+        return None
+
+
 def load_config() -> list[AccountConfig]:
     if not CONFIG_FILE.exists():
+        # No config file — try ambient credentials (EC2 instance role, env vars, etc.)
+        account = _ambient_account()
+        if account:
+            return [account]
         raise ConfigError(
             f"Config file not found: {CONFIG_FILE}\n"
-            "Run 'awscope init' to add your first account."
+            "Run 'awscope init' to add your first account, or attach an IAM role "
+            "to this instance/environment for zero-config ambient credentials."
         )
     with open(CONFIG_FILE, "rb") as f:
         data = tomllib.load(f)
@@ -88,6 +107,10 @@ def build_session(account: AccountConfig) -> boto3.Session:
 
     if account.auth_type in ("profile", "sso"):
         return boto3.Session(profile_name=account.profile)
+
+    # ambient+role with no role_arn = pure ambient (EC2 instance role, env vars, etc.)
+    if account.auth_type == "ambient+role" and not account.role_arn:
+        return boto3.Session()
 
     # profile+role or ambient+role — need to assume the role
     if account.auth_type == "profile+role":
