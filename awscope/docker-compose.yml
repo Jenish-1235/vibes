@@ -1,0 +1,36 @@
+services:
+  awscope-web:
+    build: .
+    ports:
+      - "8080:8080"
+    volumes:
+      - ~/.awscope/cache.json:/app/cache.json:ro
+    env_file:
+      - .env
+    depends_on:
+      - minio
+      - dynamodb-local
+
+  minio:
+    image: minio/minio:latest
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    volumes:
+      - minio-data:/data
+    command: server /data --console-address ":9001"
+
+  dynamodb-local:
+    image: amazon/dynamodb-local:latest
+    ports:
+      - "8000:8000"
+    volumes:
+      - dynamodb-data:/home/dynamodblocal/data
+    command: -jar DynamoDBLocal.jar -sharedDb -dbPath /home/dynamodblocal/data
+
+volumes:
+  minio-data:
+  dynamodb-data:
