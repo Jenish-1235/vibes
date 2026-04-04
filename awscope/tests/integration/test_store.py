@@ -62,7 +62,7 @@ def test_write_and_list_pipeline_runs():
     runs = list_pipeline_runs()
     # At least the run we just wrote is present
     run_ids = [r["run_id"] for r in runs]
-    assert run["run_id"] in run_ids or any(r["accounts"] == ["integration-test"] for r in runs)
+    assert run.run_id in run_ids or any(r["accounts"] == ["integration-test"] for r in runs)
 
 
 def test_write_multiple_runs():

@@ -45,8 +45,14 @@ def _ensure_table(client) -> None:
             ],
             BillingMode="PAY_PER_REQUEST",
         )
-        waiter = client.get_waiter("table_exists")
-        waiter.wait(TableName=_TABLE)
+        # Poll instead of waiter — DynamoDB Local responds immediately
+        import time
+        for _ in range(10):
+            try:
+                client.describe_table(TableName=_TABLE)
+                break
+            except ClientError:
+                time.sleep(0.3)
         log.info("Created DynamoDB table: %s", _TABLE)
 
 
