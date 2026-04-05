@@ -58,7 +58,8 @@ def _ambient_account() -> AccountConfig | None:
         identity = session.client("sts", region_name="us-east-1").get_caller_identity()
         alias = identity.get("Account", "ambient")
         return AccountConfig(alias=alias, auth_type="ambient+role")
-    except Exception:
+    except Exception as e:
+        log.debug("Ambient credential check failed: %s", e)
         return None
 
 
@@ -68,10 +69,17 @@ def load_config() -> list[AccountConfig]:
         account = _ambient_account()
         if account:
             return [account]
+        # Show what boto3 actually tried so the user can diagnose
+        import boto3 as _boto3
+        creds = _boto3.Session().get_credentials()
+        creds_info = f"boto3 resolved credentials: {creds}" if creds else "boto3 found no credentials at all"
         raise ConfigError(
             f"Config file not found: {CONFIG_FILE}\n"
-            "Run 'awscope init' to add your first account, or attach an IAM role "
-            "to this instance/environment for zero-config ambient credentials."
+            f"Ambient credential check also failed ({creds_info}).\n"
+            "Options:\n"
+            "  1. Attach an IAM role to this EC2 instance and retry\n"
+            "  2. Run 'awscope init' to configure an account manually\n"
+            "  3. Set AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY environment variables"
         )
     with open(CONFIG_FILE, "rb") as f:
         data = tomllib.load(f)
