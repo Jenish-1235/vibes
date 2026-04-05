@@ -41,7 +41,16 @@ def _tags_str(tags: dict) -> str:
 
 
 def _fmt_list(items: list) -> str:
-    return "\n".join(items) if items else ""
+    if not items:
+        return ""
+    # Flatten — each item may itself be a list (e.g. multiple trust principals)
+    flat = []
+    for item in items:
+        if isinstance(item, list):
+            flat.extend(str(i) for i in item)
+        else:
+            flat.append(str(item))
+    return "\n".join(flat)
 
 
 # ── Sheet 1: Summary ───────────────────────────────────────────────────────
@@ -83,6 +92,22 @@ def _write_all_resources(ws, result: ScanResult) -> None:
     _autowidth(ws)
 
 
+def _extract_trust_principals(policy_doc: dict) -> list[str]:
+    """Flatten all Principal values from an AssumeRolePolicyDocument into strings."""
+    principals = []
+    for statement in policy_doc.get("Statement", []):
+        principal = statement.get("Principal", {})
+        if isinstance(principal, str):
+            principals.append(principal)
+        elif isinstance(principal, dict):
+            for v in principal.values():
+                if isinstance(v, list):
+                    principals.extend(str(i) for i in v)
+                else:
+                    principals.append(str(v))
+    return principals
+
+
 # ── Sheet 3: IAM Audit ─────────────────────────────────────────────────────
 
 def _write_iam(ws, result: ScanResult) -> None:
@@ -121,11 +146,7 @@ def _write_iam(ws, result: ScanResult) -> None:
         "iam:role",
         lambda r: [
             r.account_alias, r.name, r.arn,
-            _fmt_list([
-                p.get("Principal", {}).get("Service", p.get("Principal", {}).get("AWS", ""))
-                if isinstance(p.get("Principal"), dict) else str(p.get("Principal", ""))
-                for p in r.raw.get("AssumeRolePolicyDocument", {}).get("Statement", [])
-            ]),
+            _fmt_list(_extract_trust_principals(r.raw.get("AssumeRolePolicyDocument", {}))),
             _fmt_list(r.raw.get("attached_policies", [])),
             _fmt_list(r.raw.get("inline_policies", [])),
         ],
