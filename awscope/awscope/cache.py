@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import os
+from datetime import date, datetime
 from pathlib import Path
 
 from awscope.models import AwsResource, ResourceGroup, ScanResult
@@ -14,11 +15,17 @@ def _cache_path() -> Path:
     return Path(env) if env else _DEFAULT_CACHE
 
 
+def _json_default(obj):
+    if isinstance(obj, (datetime, date)):
+        return obj.isoformat()
+    raise TypeError(f"Object of type {type(obj).__name__} is not JSON serializable")
+
+
 def write_cache(result: ScanResult) -> None:
     path = _cache_path()
     path.parent.mkdir(parents=True, exist_ok=True)
     with open(path, "w") as f:
-        json.dump(_scan_result_to_dict(result), f, indent=2)
+        json.dump(_scan_result_to_dict(result), f, indent=2, default=_json_default)
 
 
 def read_cache() -> ScanResult:
