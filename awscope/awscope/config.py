@@ -5,8 +5,12 @@ import tomllib
 from dataclasses import dataclass
 from pathlib import Path
 
+import logging
+
 import boto3
 from dotenv import load_dotenv
+
+log = logging.getLogger(__name__)
 
 load_dotenv()
 
