@@ -1,0 +1,111 @@
+name: VibeSet
+
+on:
+  push:
+    branches: [main, master]
+    tags:
+      - "vibeset-v*"
+  pull_request:
+    branches: [main, master]
+    paths:
+      - "vibeset/**"
+      - ".github/workflows/vibeset.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: vibeset-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.24"
+          cache-dependency-path: vibeset/go.sum
+
+      - name: Run tests
+        working-directory: vibeset
+        run: go test -v -race -coverprofile=coverage.out ./...
+
+      - name: Build binary
+        working-directory: vibeset
+        run: go build -o vibes .
+
+      - name: Upload binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: vibes-linux-amd64
+          path: vibeset/vibes
+          if-no-files-found: error
+
+  build-matrix:
+    needs: test-and-build
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/vibeset-v')
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            goos: linux
+            goarch: amd64
+          - os: macos-latest
+            goos: darwin
+            goarch: arm64
+          - os: macos-13
+            goos: darwin
+            goarch: amd64
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.24"
+          cache-dependency-path: vibeset/go.sum
+
+      - name: Build
+        working-directory: vibeset
+        env:
+          GOOS: ${{ matrix.goos }}
+          GOARCH: ${{ matrix.goarch }}
+        run: go build -o vibes-${{ matrix.goos }}-${{ matrix.goarch }} .
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: vibes-${{ matrix.goos }}-${{ matrix.goarch }}
+          path: vibeset/vibes-${{ matrix.goos }}-${{ matrix.goarch }}
+
+  release:
+    needs: build-matrix
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/vibeset-v')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: binaries
+          pattern: vibes-*
+          merge-multiple: true
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: VibeSet ${{ github.ref_name }}
+          files: binaries/vibes-*
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
