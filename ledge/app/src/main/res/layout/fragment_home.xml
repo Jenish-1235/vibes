@@ -28,7 +28,7 @@
             android:layout_height="0dp"
             android:layout_weight="1"
             android:clipToPadding="false"
-            android:paddingBottom="80dp" />
+            android:paddingBottom="96dp" />
 
         <TextView
             android:id="@+id/empty_state"
@@ -42,6 +42,21 @@
             android:visibility="gone" />
     </LinearLayout>
 
+    <!-- Quick Add FAB (primary action) -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_quick_add"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="80dp"
+        android:contentDescription="@string/quick_add"
+        app:backgroundTint="@color/fab_quick_add"
+        app:srcCompat="@android:drawable/ic_menu_edit"
+        app:tint="@color/fab_quick_add_icon"
+        app:fabSize="normal" />
+
+    <!-- Add Friend FAB (secondary, smaller) -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_add_friend"
         android:layout_width="wrap_content"
@@ -51,5 +66,6 @@
         android:contentDescription="@string/add_friend"
         app:backgroundTint="?attr/colorPrimary"
         app:srcCompat="@android:drawable/ic_input_add"
-        app:tint="?attr/colorOnPrimary" />
+        app:tint="?attr/colorOnPrimary"
+        app:fabSize="mini" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

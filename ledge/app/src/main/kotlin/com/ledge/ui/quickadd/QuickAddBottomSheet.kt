@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -28,8 +27,6 @@ class QuickAddBottomSheet : BottomSheetDialogFragment() {
     private val binding get() = _binding!!
     private val viewModel: QuickAddViewModel by viewModels()
 
-    private var selectedFriendId: Long? = null
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
@@ -39,13 +36,6 @@ class QuickAddBottomSheet : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        binding.toggleNote.setOnClickListener {
-            binding.noteLayout.isVisible = !binding.noteLayout.isVisible
-            if (binding.noteLayout.isVisible) {
-                binding.noteInput.requestFocus()
-            }
-        }
 
         binding.btnGave.setOnClickListener { submit(Direction.GAVE) }
         binding.btnOwe.setOnClickListener { submit(Direction.OWE) }
@@ -68,21 +58,29 @@ class QuickAddBottomSheet : BottomSheetDialogFragment() {
                 text = friend.name
                 isCheckable = true
                 tag = friend.id
-                setOnCheckedChangeListener { _, isChecked ->
-                    if (isChecked) selectedFriendId = friend.id
-                }
             }
             binding.chipGroupFriends.addView(chip)
         }
-        // Auto-select first if available
-        if (friends.isNotEmpty() && selectedFriendId == null) {
-            val first = binding.chipGroupFriends.getChildAt(0) as? Chip
-            first?.isChecked = true
+        if (friends.size == 1) {
+            (binding.chipGroupFriends.getChildAt(0) as? Chip)?.isChecked = true
         }
     }
 
+    private fun getSelectedFriendIds(): List<Long> {
+        val ids = mutableListOf<Long>()
+        for (i in 0 until binding.chipGroupFriends.childCount) {
+            val chip = binding.chipGroupFriends.getChildAt(i) as? Chip ?: continue
+            if (chip.isChecked) {
+                ids.add(chip.tag as Long)
+            }
+        }
+        return ids
+    }
+
     private fun submit(direction: Direction) {
-        val friendId = selectedFriendId ?: return
+        val selectedIds = getSelectedFriendIds()
+        if (selectedIds.isEmpty()) return
+
         val amountText = binding.amountInput.text.toString().trim()
         if (amountText.isEmpty()) return
 
@@ -91,12 +89,13 @@ class QuickAddBottomSheet : BottomSheetDialogFragment() {
 
         val note = binding.noteInput.text?.toString()?.trim()?.ifEmpty { null }
 
-        viewModel.logTransaction(friendId, amountPaise, direction, note) { friendName ->
-            val formatted = FriendAdapter.formatPaise(amountPaise)
+        viewModel.logTransactionForMultiple(selectedIds, amountPaise, direction, note) { names ->
             activity?.let { act ->
+                val formatted = FriendAdapter.formatPaise(amountPaise)
+                val namesStr = names.joinToString(", ")
                 Snackbar.make(
                     act.findViewById(android.R.id.content),
-                    getString(R.string.logged_snackbar, formatted.removePrefix("+"), friendName),
+                    getString(R.string.logged_snackbar, formatted.removePrefix("+"), namesStr),
                     Snackbar.LENGTH_SHORT
                 ).show()
             }

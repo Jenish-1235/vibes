@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="Theme.Ledge" parent="Theme.Material3.Light.NoActionBar">
-        <item name="colorPrimary">#5C7A6E</item>
+        <item name="colorPrimary">#1B8553</item>
         <item name="colorOnPrimary">#FFFFFF</item>
-        <item name="colorPrimaryContainer">#D2E5DC</item>
-        <item name="colorOnPrimaryContainer">#0F241C</item>
-        <item name="colorSecondary">#6B6F6A</item>
+        <item name="colorPrimaryContainer">#D5F5E3</item>
+        <item name="colorOnPrimaryContainer">#0A3D22</item>
+        <item name="colorSecondary">#5F6368</item>
         <item name="colorOnSecondary">#FFFFFF</item>
-        <item name="colorSecondaryContainer">#E6E8E4</item>
-        <item name="colorOnSecondaryContainer">#1E211E</item>
+        <item name="colorSecondaryContainer">#E8EAED</item>
+        <item name="colorOnSecondaryContainer">#1A1A1A</item>
         <item name="colorSurface">@color/surface</item>
         <item name="colorOnSurface">@color/text_primary</item>
         <item name="colorOnSurfaceVariant">@color/text_secondary</item>

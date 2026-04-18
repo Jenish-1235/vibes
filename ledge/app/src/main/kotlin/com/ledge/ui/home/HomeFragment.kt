@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.ledge.R
 import com.ledge.databinding.FragmentHomeBinding
+import com.ledge.ui.quickadd.QuickAddBottomSheet
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -48,6 +49,9 @@ class HomeFragment : Fragment() {
         binding.friendsList.adapter = adapter
 
         binding.fabAddFriend.setOnClickListener { showAddFriendDialog() }
+        binding.fabQuickAdd.setOnClickListener {
+            QuickAddBottomSheet().show(parentFragmentManager, "quick_add")
+        }
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {

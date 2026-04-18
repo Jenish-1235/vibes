@@ -5,7 +5,8 @@
     <string name="friend_name_hint">Friend name</string>
     <string name="i_gave">I Gave</string>
     <string name="i_owe">I Owe</string>
-    <string name="add_note">+ add note</string>
+    <string name="quick_add">Quick Add</string>
+    <string name="select_friends">Select friends</string>
     <string name="note_hint">Note (optional)</string>
     <string name="amount_hint">0</string>
     <string name="rupee_symbol">₹</string>
