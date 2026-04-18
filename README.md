@@ -21,6 +21,7 @@ These are not production SaaS products. They are sharp tools that solve real fri
 vibes/
 ├── README.md               ← you are here
 ├── ledge/                  ← Native Android app, friend money tracker
+├── vibeset/                ← CLI tool, named dev environment switcher
 ├── <project-slug>/         ← one directory per project
 └── ...
 ```
@@ -34,6 +35,7 @@ Each project lives in its own top-level directory. There is no shared library, n
 | Project | Platform | Status | One-liner |
 |---------|----------|--------|-----------|
 | `ledge` | Android (Kotlin) | 🚧 In progress | Minimal friend money ledger with home screen widget |
+| `vibeset` | macOS (Go) | 🚧 In progress | Named dev environment snapshots switched with one CLI command |
 
 Status legend: 🚧 In progress · ✅ Usable · 🧊 Frozen · 🗑️ Abandoned
 
