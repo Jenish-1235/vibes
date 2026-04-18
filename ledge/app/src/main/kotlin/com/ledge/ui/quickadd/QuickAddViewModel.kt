@@ -3,7 +3,6 @@ package com.ledge.ui.quickadd
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ledge.data.model.Direction
-import com.ledge.data.model.Friend
 import com.ledge.data.repository.LedgeRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
@@ -19,17 +18,20 @@ class QuickAddViewModel @Inject constructor(
     val friends = repository.friends
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
-    fun logTransaction(
-        friendId: Long,
+    fun logTransactionForMultiple(
+        friendIds: List<Long>,
         amountPaise: Long,
         direction: Direction,
         note: String?,
-        onDone: (friendName: String) -> Unit
+        onDone: (friendNames: List<String>) -> Unit
     ) {
         viewModelScope.launch {
-            repository.logTransaction(friendId, amountPaise, direction, note)
-            val friendName = friends.value.find { it.id == friendId }?.name ?: ""
-            onDone(friendName)
+            val friendMap = friends.value.associate { it.id to it.name }
+            for (id in friendIds) {
+                repository.logTransaction(id, amountPaise, direction, note)
+            }
+            val names = friendIds.mapNotNull { friendMap[it] }
+            onDone(names)
         }
     }
 }
