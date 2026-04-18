@@ -8,14 +8,16 @@ import (
 
 func TestAllExecutors_ReturnsAll(t *testing.T) {
 	executors := AllExecutors()
-	if len(executors) != 5 {
-		t.Fatalf("expected 5 executors, got %d", len(executors))
+	if len(executors) != 6 {
+		t.Fatalf("expected 6 executors, got %d", len(executors))
 	}
 
 	// Verify types
 	types := map[string]bool{}
 	for _, ex := range executors {
 		switch ex.(type) {
+		case *GitExecutor:
+			types["git"] = true
 		case *ProcessExecutor:
 			types["process"] = true
 		case *AppExecutor:
@@ -28,7 +30,7 @@ func TestAllExecutors_ReturnsAll(t *testing.T) {
 			types["ide"] = true
 		}
 	}
-	for _, name := range []string{"process", "app", "terminal", "browser", "ide"} {
+	for _, name := range []string{"git", "process", "app", "terminal", "browser", "ide"} {
 		if !types[name] {
 			t.Errorf("missing executor type: %s", name)
 		}

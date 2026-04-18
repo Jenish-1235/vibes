@@ -1,14 +1,15 @@
 package config
 
 type VibeConfig struct {
-	SchemaVersion int             `yaml:"schema_version"`
-	Name          string          `yaml:"name"`
-	Description   string          `yaml:"description,omitempty"`
-	Terminal      TerminalConfig  `yaml:"terminal,omitempty"`
-	Browser       BrowserConfig   `yaml:"browser,omitempty"`
-	IDE           IDEConfig       `yaml:"ide,omitempty"`
-	Apps          AppsConfig      `yaml:"apps,omitempty"`
-	Teardown      TeardownConfig  `yaml:"teardown,omitempty"`
+	SchemaVersion int            `yaml:"schema_version"`
+	Name          string         `yaml:"name"`
+	Description   string         `yaml:"description,omitempty"`
+	Terminal      TerminalConfig `yaml:"terminal,omitempty"`
+	Browser       BrowserConfig  `yaml:"browser,omitempty"`
+	IDE           IDEConfig      `yaml:"ide,omitempty"`
+	Apps          AppsConfig     `yaml:"apps,omitempty"`
+	Teardown      TeardownConfig `yaml:"teardown,omitempty"`
+	Git           GitConfig      `yaml:"git,omitempty"`
 }
 
 type TerminalConfig struct {
@@ -23,8 +24,14 @@ type TerminalSession struct {
 }
 
 type BrowserConfig struct {
-	Tool string   `yaml:"tool"`
-	Tabs []string `yaml:"tabs,omitempty"`
+	Tool    string   `yaml:"tool"`
+	Profile string   `yaml:"profile,omitempty"`
+	Tabs    []string `yaml:"tabs,omitempty"`
+}
+
+type GitConfig struct {
+	Name  string `yaml:"name,omitempty"`
+	Email string `yaml:"email,omitempty"`
 }
 
 type IDEConfig struct {
@@ -42,9 +49,9 @@ type AppsConfig struct {
 }
 
 type TeardownConfig struct {
-	KillProcesses     []string `yaml:"kill_processes,omitempty"`
-	CloseApps         []string `yaml:"close_apps,omitempty"`
-	AggressiveTeardown bool    `yaml:"aggressive_teardown,omitempty"`
+	KillProcesses      []string `yaml:"kill_processes,omitempty"`
+	CloseApps          []string `yaml:"close_apps,omitempty"`
+	AggressiveTeardown bool     `yaml:"aggressive_teardown,omitempty"`
 }
 
 type GlobalConfig struct {

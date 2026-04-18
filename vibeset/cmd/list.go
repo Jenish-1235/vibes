@@ -58,7 +58,7 @@ func runList(cmd *cobra.Command, args []string) error {
 		}
 
 		if name == activeName {
-			fmt.Printf("%s%s  %s\n", marker, "", lastUsed)
+			fmt.Printf("%s%s  %s\n", marker, nameStr, lastUsed)
 		} else {
 			fmt.Printf("%s  %s\n", nameStr, lastUsed)
 		}

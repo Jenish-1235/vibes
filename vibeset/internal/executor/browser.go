@@ -21,13 +21,15 @@ func (b *BrowserExecutor) Setup(cfg *config.VibeConfig) error {
 		tool = "chrome"
 	}
 
+	profile := cfg.Browser.Profile
+
 	switch tool {
 	case "chrome":
-		return openTabsChrome(cfg.Browser.Tabs)
+		return openTabsChrome(cfg.Browser.Tabs, profile)
 	case "arc":
-		return openTabsArc(cfg.Browser.Tabs)
+		return openTabsArc(cfg.Browser.Tabs, profile)
 	case "firefox":
-		return openTabsFirefox(cfg.Browser.Tabs)
+		return openTabsFirefox(cfg.Browser.Tabs, profile)
 	default:
 		return fmt.Errorf("unsupported browser: %s", tool)
 	}
@@ -39,9 +41,17 @@ func (b *BrowserExecutor) Teardown(cfg *config.VibeConfig) error {
 	return nil
 }
 
-func openTabsChrome(tabs []string) error {
+func openTabsChrome(tabs []string, profile string) error {
 	if runtime.GOOS != "darwin" {
 		return openTabsGeneric("google-chrome", tabs)
+	}
+
+	if profile != "" {
+		// Profile-aware: use CLI to open Chrome with a specific profile directory.
+		// Profile names match Chrome's internal directory names: "Default", "Profile 1", "Work", etc.
+		args := []string{"-a", "Google Chrome", "--args", "--new-window", "--profile-directory=" + profile}
+		args = append(args, tabs...)
+		return exec.Command("open", args...).Run()
 	}
 
 	var sb strings.Builder
@@ -63,11 +73,13 @@ end tell`)
 	return exec.Command("osascript", "-e", sb.String()).Run()
 }
 
-func openTabsArc(tabs []string) error {
+func openTabsArc(tabs []string, profile string) error {
 	if runtime.GOOS != "darwin" {
 		return fmt.Errorf("arc browser is only supported on macOS")
 	}
 
+	// Arc uses "Spaces" as profiles. There is no reliable public CLI API for
+	// targeting a specific Space, so the profile field is intentionally ignored here.
 	var sb strings.Builder
 	sb.WriteString(`tell application "Arc"
 	activate
@@ -84,14 +96,17 @@ end tell`)
 	return exec.Command("osascript", "-e", sb.String()).Run()
 }
 
-func openTabsFirefox(tabs []string) error {
+func openTabsFirefox(tabs []string, profile string) error {
 	if runtime.GOOS != "darwin" {
 		return openTabsGeneric("firefox", tabs)
 	}
 
-	// Firefox on macOS: open first tab, then use CLI for rest
-	args := append([]string{"--new-window"}, tabs[0])
-	if err := exec.Command("open", "-a", "Firefox", "--args", args[0], args[1]).Run(); err != nil {
+	args := []string{"-a", "Firefox", "--args", "--new-window"}
+	if profile != "" {
+		args = append(args, "-P", profile)
+	}
+	args = append(args, tabs[0])
+	if err := exec.Command("open", args...).Run(); err != nil {
 		return err
 	}
 

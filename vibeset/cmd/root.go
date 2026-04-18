@@ -26,4 +26,6 @@ func init() {
 	rootCmd.AddCommand(editCmd)
 	rootCmd.AddCommand(pauseCmd)
 	rootCmd.AddCommand(resumeCmd)
+	rootCmd.AddCommand(downCmd)
+	rootCmd.AddCommand(versionCmd)
 }

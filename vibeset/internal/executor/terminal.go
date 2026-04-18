@@ -27,6 +27,8 @@ func (t *TerminalExecutor) Setup(cfg *config.VibeConfig) error {
 		return setupITerm2(cfg.Terminal.Sessions)
 	case "kitty":
 		return setupKitty(cfg.Terminal.Sessions)
+	case "terminal", "terminal.app":
+		return setupTerminalApp(cfg.Terminal.Sessions)
 	default:
 		return fmt.Errorf("unsupported terminal: %s", tool)
 	}
@@ -114,6 +116,39 @@ func setupKitty(sessions []config.TerminalSession) error {
 
 		if err := exec.Command("kitty", args...).Run(); err != nil {
 			return fmt.Errorf("kitty launch failed for %q: %w", s.Name, err)
+		}
+	}
+	return nil
+}
+
+func setupTerminalApp(sessions []config.TerminalSession) error {
+	if runtime.GOOS != "darwin" {
+		return fmt.Errorf("terminal.app is only supported on macOS")
+	}
+
+	for i, s := range sessions {
+		shellCmd := fmt.Sprintf("cd %s", s.Dir)
+		if s.Command != "" {
+			shellCmd = fmt.Sprintf("cd %s && %s", s.Dir, s.Command)
+		}
+
+		var script string
+		if i == 0 {
+			script = fmt.Sprintf(`tell application "Terminal"
+	activate
+	do script "%s"
+end tell`, shellCmd)
+		} else {
+			script = fmt.Sprintf(`tell application "Terminal"
+	activate
+	tell application "System Events" to keystroke "t" using {command down}
+	delay 0.3
+	do script "%s" in selected tab of front window
+end tell`, shellCmd)
+		}
+
+		if err := exec.Command("osascript", "-e", script).Run(); err != nil {
+			return fmt.Errorf("Terminal.app setup failed for %q: %w", s.Name, err)
 		}
 	}
 	return nil

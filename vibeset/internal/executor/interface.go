@@ -9,6 +9,7 @@ type Executor interface {
 
 func AllExecutors() []Executor {
 	return []Executor{
+		&GitExecutor{},
 		&ProcessExecutor{},
 		&AppExecutor{},
 		&TerminalExecutor{},

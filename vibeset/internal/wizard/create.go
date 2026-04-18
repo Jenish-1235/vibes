@@ -28,7 +28,7 @@ func RunCreateWizard() (*config.VibeConfig, error) {
 	cfg.Description = strings.TrimSpace(desc)
 
 	// Terminal
-	fmt.Print("\nTerminal tool [wezterm/iterm2/kitty] (enter to skip): ")
+	fmt.Print("\nTerminal tool [wezterm/iterm2/kitty/terminal] (enter to skip): ")
 	termTool, _ := reader.ReadString('\n')
 	termTool = strings.TrimSpace(termTool)
 	if termTool != "" {
@@ -64,6 +64,11 @@ func RunCreateWizard() (*config.VibeConfig, error) {
 	browserTool = strings.TrimSpace(browserTool)
 	if browserTool != "" {
 		cfg.Browser.Tool = browserTool
+
+		fmt.Print("Browser profile (optional, e.g. \"Work\", \"Default\", \"Profile 1\"): ")
+		profile, _ := reader.ReadString('\n')
+		cfg.Browser.Profile = strings.TrimSpace(profile)
+
 		fmt.Println("Add URLs (empty to stop):")
 		for {
 			fmt.Print("  URL: ")
@@ -118,6 +123,16 @@ func RunCreateWizard() (*config.VibeConfig, error) {
 			}
 		}
 	}
+
+	// Git identity
+	fmt.Print("\nGit identity for this vibe (optional):")
+	fmt.Print("\n  Name (e.g. \"Work Me\", enter to skip): ")
+	gitName, _ := reader.ReadString('\n')
+	cfg.Git.Name = strings.TrimSpace(gitName)
+
+	fmt.Print("  Email (e.g. \"work@company.com\", enter to skip): ")
+	gitEmail, _ := reader.ReadString('\n')
+	cfg.Git.Email = strings.TrimSpace(gitEmail)
 
 	return cfg, nil
 }

@@ -38,7 +38,7 @@ jobs:
 
       - name: Build binary
         working-directory: vibeset
-        run: go build -o vibes .
+        run: go build -ldflags "-X github.com/jenish-1235/vibes/vibeset/cmd.Version=dev" -o vibes .
 
       - name: Upload binary
         uses: actions/upload-artifact@v4
@@ -73,12 +73,19 @@ jobs:
           go-version: "1.24"
           cache-dependency-path: vibeset/go.sum
 
+      - name: Extract version from tag
+        id: version
+        run: echo "VERSION=${GITHUB_REF_NAME#vibeset-}" >> $GITHUB_OUTPUT
+
       - name: Build
         working-directory: vibeset
         env:
           GOOS: ${{ matrix.goos }}
           GOARCH: ${{ matrix.goarch }}
-        run: go build -o vibes-${{ matrix.goos }}-${{ matrix.goarch }} .
+        run: |
+          go build \
+            -ldflags "-X github.com/jenish-1235/vibes/vibeset/cmd.Version=${{ steps.version.outputs.VERSION }}" \
+            -o vibes-${{ matrix.goos }}-${{ matrix.goarch }} .
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -101,11 +108,22 @@ jobs:
           pattern: vibes-*
           merge-multiple: true
 
+      - name: Make binaries executable
+        run: chmod +x binaries/vibes-*
+
+      - name: Generate checksums
+        run: |
+          cd binaries
+          sha256sum vibes-* > checksums.txt
+          cat checksums.txt
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           name: VibeSet ${{ github.ref_name }}
-          files: binaries/vibes-*
+          files: |
+            binaries/vibes-*
+            binaries/checksums.txt
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
