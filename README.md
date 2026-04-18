@@ -31,9 +31,12 @@ Each project lives in its own top-level directory. There is no shared library, n
 
 ## Project Index
 
-| Project | Platform | Status | One-liner |
-|---------|----------|--------|-----------|
-| `ledge` | Android (Kotlin) | 🚧 In progress | Minimal friend money ledger with home screen widget |
+
+| Project   | Platform           | Status         | One-liner                                                |
+| --------- | ------------------ | -------------- | -------------------------------------------------------- |
+| `ledge`   | Android (Kotlin)   | ✅ Usable       | Minimal friend money ledger with home screen widget      |
+| `awscope` | Python (CLI + Web) | 🚧 In progress | AI-powered AWS resource inventory and grouping dashboard |
+
 
 Status legend: 🚧 In progress · ✅ Usable · 🧊 Frozen · 🗑️ Abandoned
 
@@ -60,11 +63,13 @@ Every project directory follows this layout:
 If you are an AI agent operating inside this repository, read this section carefully.
 
 **Before touching any project:**
+
 1. Read `<project-slug>/README.md` for current state and known issues.
 2. Read `<project-slug>/PRD.md` to understand what the project is supposed to do and what is explicitly out of scope.
 3. Read `<project-slug>/TRD.md` to understand the tech stack, architecture decisions, and data model.
 
 **Do not:**
+
 - Add dependencies not already in the TRD without flagging it explicitly.
 - Add abstractions, layers, or patterns beyond what the TRD specifies — these are intentionally lean projects.
 - Introduce shared libraries across projects — isolation is intentional.
@@ -72,6 +77,7 @@ If you are an AI agent operating inside this repository, read this section caref
 - Rename or restructure directories without confirming against this README.
 
 **Do:**
+
 - Keep changes minimal and scoped to the task.
 - Respect the explicit non-goals listed in each PRD — they are guardrails, not oversights.
 - Add a brief entry to the project's README if you add a new file, dependency, or architectural piece.
@@ -82,7 +88,7 @@ If you are an AI agent operating inside this repository, read this section caref
 ## Starting a New Project
 
 When adding a new project to this monorepo:
-0. Create a new branch with this naming strategy project/<project-name>, this helps keeping all projects as separate branches until ready to be merged into main
+0. Create a new branch with this naming strategy project/, this helps keeping all projects as separate branches until ready to be merged into main
 1. Create a top-level directory with a short, lowercase, hyphenated slug.
 2. Write `PRD.md` before writing any code. If you can't write a one-paragraph problem statement, the idea isn't ready.
 3. Write `TRD.md` before writing any code. Commit to the stack and data model upfront.
