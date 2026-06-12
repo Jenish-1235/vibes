@@ -1,0 +1,24 @@
+# What to hunt for on X. Phrases with spaces are matched as exact phrases.
+keywords:
+  - "customer discovery"
+  - "talking to users"
+
+# Only tweets scoring >= this (1-10) get a reply drafted.
+relevance_threshold: 7
+
+# Max tweets evaluated per `scan` run (each costs one LLM call to score).
+scan_max_tweets: 25
+
+# Hard daily send limits per kind. Keep these human-sized.
+daily_caps:
+  replies: 10
+  posts: 4
+  dms: 5
+
+# Randomized pause between consecutive sends, in seconds.
+min_send_gap_seconds: 45
+max_send_gap_seconds: 120
+
+# Freeform notes injected into every prompt, e.g. "lowercase, dry humor, never
+# use the word 'leverage', occasionally sarcastic".
+voice_notes: ""

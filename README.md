@@ -34,6 +34,7 @@ Each project lives in its own top-level directory. There is no shared library, n
 | Project | Platform | Status | One-liner |
 |---------|----------|--------|-----------|
 | `ledge` | Android (Kotlin) | 🚧 In progress | Minimal friend money ledger with home screen widget |
+| `outreach` | CLI (Python) | 🚧 In progress | Twitter/X customer-discovery agent: drafts replies, posts & DMs from a context doc, sends after review |
 
 Status legend: 🚧 In progress · ✅ Usable · 🧊 Frozen · 🗑️ Abandoned
 
